@@ -1,0 +1,272 @@
+<!--
+  Option 5 — AI Copilot Home
+  Pattern source: ChatGPT/Gemini/Grok centered prompt + ClickUp Brain suggested actions + KWIQ shell
+  Centered "What do you want to work on?" + prompt chips + thin today strip + lead cards
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AI Copilot · CRM Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+  :root{
+    --system-action:#006C84; --system-tinted:#D5F7FF; --system-divider:rgba(0,108,132,.1);
+    --neutral-primary:#282B33; --neutral-secondary:#3D424D; --neutral-tertiary:#6C727E;
+    --neutral-page:#F7F7F8; --neutral-container:#FFFFFF; --neutral-tinted:#E4E5E7; --neutral-divider:rgba(43,43,51,.1);
+    --green-tinted:#D6F2DF; --green-action:#026E24;
+    --yellow-tinted:#FFEDC9; --yellow-action:#995E00;
+    --red-tinted:#FCDCDD; --red-action:#C5050B;
+    --purple-tinted:#EFE8FB; --purple-action:#6730B4;
+    --shadow12:0 8px 24px rgba(43,43,51,.06); --shadow04:0 2px 6px rgba(43,43,51,.05);
+    --r:12px;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body,*{font-family:'Mulish',sans-serif;color:var(--neutral-primary);-webkit-font-smoothing:antialiased}
+  body{
+    background:
+      radial-gradient(900px 540px at 50% -160px, rgba(0,108,132,.10), transparent 60%),
+      radial-gradient(700px 460px at 110% 10%, rgba(103,48,180,.06), transparent 60%),
+      var(--neutral-page);
+    min-height:100vh
+  }
+
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  .sidebar{background:var(--neutral-container);border-right:1px solid var(--neutral-divider);padding:24px 16px;display:flex;flex-direction:column;gap:6px}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 16px}
+  .brand-mark{width:28px;height:28px;border-radius:6px;background:#CC0000;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+  .brand-name{font-weight:800;font-size:16px}
+  .nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--neutral-tertiary);font-weight:700;padding:16px 8px 4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:14px;color:var(--neutral-secondary);cursor:pointer}
+  .nav-item.active{background:var(--system-tinted);color:var(--system-action);font-weight:700}
+
+  .recent{margin-top:8px}
+  .recent-title{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--neutral-tertiary);font-weight:700;padding:16px 8px 4px}
+  .recent-item{font-size:13px;padding:6px 10px;color:var(--neutral-secondary);border-radius:8px;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .recent-item:hover{background:var(--neutral-page)}
+
+  /* Main */
+  .main{padding:40px 32px 64px;display:flex;flex-direction:column;align-items:center}
+  .container{width:100%;max-width:760px}
+
+  .topbar{width:100%;display:flex;justify-content:space-between;align-items:center;margin-bottom:64px}
+  .topbar-empty{width:24px}
+  .top-r{display:flex;align-items:center;gap:8px}
+  .iconbtn{width:36px;height:36px;border-radius:10px;background:var(--neutral-container);border:1px solid var(--neutral-divider);display:grid;place-items:center;cursor:pointer}
+  .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#006C84,#0E4E5D);color:#fff;display:grid;place-items:center;font-weight:800;font-size:13px}
+
+  .greet-eyebrow{font-size:12px;font-weight:700;color:var(--neutral-tertiary);letter-spacing:.5px;text-transform:uppercase;text-align:center}
+  .greet{font-size:32px;line-height:40px;font-weight:800;text-align:center;margin:8px 0 6px}
+  .greet em{font-style:normal;background:linear-gradient(135deg,#006C84,#6730B4);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .greet-sub{font-size:14px;color:var(--neutral-secondary);text-align:center;max-width:540px;margin:0 auto 32px}
+
+  /* Prompt input */
+  .prompt-wrap{background:#fff;border:1px solid var(--neutral-divider);border-radius:18px;padding:14px 16px;box-shadow:0 10px 30px rgba(43,43,51,.08);width:100%}
+  .prompt-input{width:100%;border:none;outline:none;font-family:'Mulish',sans-serif;font-size:16px;color:var(--neutral-primary);padding:8px 4px}
+  .prompt-input::placeholder{color:var(--neutral-tertiary)}
+  .prompt-actions{display:flex;justify-content:space-between;align-items:center;padding-top:10px;border-top:1px solid var(--neutral-divider);margin-top:8px}
+  .prompt-tools{display:flex;gap:6px}
+  .tool{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--neutral-secondary);background:var(--neutral-page);border-radius:999px;padding:6px 10px;cursor:pointer;font-weight:700}
+  .tool:hover{background:var(--system-tinted);color:var(--system-action)}
+  .send{width:36px;height:36px;border-radius:10px;background:var(--system-action);color:#fff;display:grid;place-items:center;cursor:pointer;font-weight:800}
+
+  /* Chips */
+  .chips{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:18px}
+  .chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--neutral-divider);border-radius:999px;padding:9px 14px;font-size:13px;font-weight:700;color:var(--neutral-secondary);cursor:pointer}
+  .chip:hover{border-color:var(--system-action);color:var(--system-action)}
+  .chip-ic{width:18px;height:18px;border-radius:5px;display:grid;place-items:center;font-size:11px}
+  .chip-ic.a{background:var(--system-tinted);color:var(--system-action)}
+  .chip-ic.b{background:var(--green-tinted);color:var(--green-action)}
+  .chip-ic.c{background:var(--yellow-tinted);color:var(--yellow-action)}
+  .chip-ic.d{background:var(--purple-tinted);color:var(--purple-action)}
+  .chip-ic.e{background:var(--red-tinted);color:var(--red-action)}
+
+  /* Suggestions section */
+  .suggest{margin-top:48px;width:100%}
+  .suggest-h{display:flex;align-items:center;gap:8px;margin-bottom:10px;font-size:12px;text-transform:uppercase;letter-spacing:.5px;font-weight:800;color:var(--neutral-tertiary)}
+  .suggest-h::before{content:"";width:14px;height:14px;display:inline-block;border-radius:4px;background:linear-gradient(135deg,#006C84,#6730B4)}
+  .suggest-list{background:#fff;border:1px solid var(--neutral-divider);border-radius:14px;box-shadow:var(--shadow04);overflow:hidden}
+  .suggest-row{display:grid;grid-template-columns:32px 1fr auto;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--neutral-divider);cursor:pointer}
+  .suggest-row:last-child{border-bottom:none}
+  .suggest-row:hover{background:var(--neutral-page)}
+  .sr-ic{width:32px;height:32px;border-radius:8px;display:grid;place-items:center;font-weight:800;font-size:13px}
+  .sr-ic.draft{background:var(--system-tinted);color:var(--system-action)}
+  .sr-ic.find{background:var(--green-tinted);color:var(--green-action)}
+  .sr-ic.alert{background:var(--red-tinted);color:var(--red-action)}
+  .sr-ic.cma{background:var(--yellow-tinted);color:var(--yellow-action)}
+  .sr-t{font-size:14px;font-weight:700}
+  .sr-s{font-size:12px;color:var(--neutral-tertiary);margin-top:2px}
+  .sr-go{font-size:12px;color:var(--system-action);font-weight:700}
+
+  /* Today strip */
+  .strip{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:16px;width:100%}
+  .strip-card{background:#fff;border:1px solid var(--neutral-divider);border-radius:14px;padding:16px 18px;box-shadow:var(--shadow04)}
+  .strip-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+  .strip-title{font-size:13px;font-weight:800}
+  .strip-link{font-size:12px;color:var(--system-action);font-weight:700;cursor:pointer}
+  .strip-item{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--neutral-divider);gap:12px}
+  .strip-item:last-child{border:none}
+  .strip-l{font-size:13px;font-weight:700}
+  .strip-r{font-size:11px;color:var(--neutral-tertiary);font-weight:700}
+  .strip-sub{font-size:11px;color:var(--neutral-tertiary)}
+
+  .lead-card{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+  .lead-card .name{font-size:13px;font-weight:800}
+  .lead-card .sub{font-size:11px;color:var(--neutral-tertiary);margin-top:2px}
+  .badge{font-size:10px;font-weight:800;padding:2px 6px;border-radius:6px;white-space:nowrap}
+  .b-hot{background:var(--red-tinted);color:var(--red-action)}
+  .b-warm{background:var(--yellow-tinted);color:var(--yellow-action)}
+  .b-new{background:var(--green-tinted);color:var(--green-action)}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">KW</div><div class="brand-name">KWIQ</div></div>
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item active">Ask KWIQ</div>
+    <div class="nav-item">Today</div>
+    <div class="nav-item">Leads</div>
+    <div class="nav-item">Pipeline</div>
+    <div class="nav-item">Listings</div>
+    <div class="nav-item">Marketing</div>
+
+    <div class="recent">
+      <div class="recent-title">Recent chats</div>
+      <div class="recent-item">Draft follow-up to Sam Chu</div>
+      <div class="recent-item">CMA · 1124 Cherrywood Dr</div>
+      <div class="recent-item">First-time buyer script</div>
+      <div class="recent-item">Open house checklist</div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <div class="topbar">
+      <div class="topbar-empty"></div>
+      <div class="top-r">
+        <div class="iconbtn" title="History">⟲</div>
+        <div class="iconbtn" title="New chat">+</div>
+        <div class="avatar">AR</div>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="greet-eyebrow">Tuesday morning · 7 new leads since yesterday</div>
+      <h1 class="greet">Good morning, <em>Alfonso</em>. What do you want to work on?</h1>
+      <p class="greet-sub">Ask anything, or pick a starting point below — I've already scanned your inbox, calendar and pipeline.</p>
+
+      <!-- Prompt -->
+      <div class="prompt-wrap">
+        <input class="prompt-input" placeholder="Ask KWIQ to draft, find, summarize, or plan…">
+        <div class="prompt-actions">
+          <div class="prompt-tools">
+            <div class="tool">＋ Add lead</div>
+            <div class="tool">🎤 Voice</div>
+            <div class="tool">📎 Attach</div>
+            <div class="tool">🔎 Search MLS</div>
+          </div>
+          <div class="send">↑</div>
+        </div>
+      </div>
+
+      <!-- Chips -->
+      <div class="chips">
+        <div class="chip"><span class="chip-ic a">✎</span>Draft follow-ups for cold leads</div>
+        <div class="chip"><span class="chip-ic b">☎</span>Find leads to call now</div>
+        <div class="chip"><span class="chip-ic c">📊</span>Build a CMA</div>
+        <div class="chip"><span class="chip-ic d">📈</span>Review my pipeline</div>
+        <div class="chip"><span class="chip-ic e">⚡</span>Plan my week</div>
+      </div>
+
+      <!-- Suggested by KWIQ -->
+      <section class="suggest">
+        <div class="suggest-h">Suggested for you · based on your day</div>
+        <div class="suggest-list">
+          <div class="suggest-row">
+            <div class="sr-ic alert">!</div>
+            <div>
+              <div class="sr-t">Call Trevor Hill — pre-approval just came in</div>
+              <div class="sr-s">New buyer · $525k · came in 14 min ago, still warm</div>
+            </div>
+            <div class="sr-go">Open →</div>
+          </div>
+          <div class="suggest-row">
+            <div class="sr-ic draft">✎</div>
+            <div>
+              <div class="sr-t">Draft a check-in to Sam Chu</div>
+              <div class="sr-s">21 days cold · I'll mention the new $675k listing on 5th</div>
+            </div>
+            <div class="sr-go">Draft →</div>
+          </div>
+          <div class="suggest-row">
+            <div class="sr-ic cma">📊</div>
+            <div>
+              <div class="sr-t">Build a Cherrywood CMA for the Patels</div>
+              <div class="sr-s">2 new comparables hit MLS this morning</div>
+            </div>
+            <div class="sr-go">Build →</div>
+          </div>
+          <div class="suggest-row">
+            <div class="sr-ic find">🔎</div>
+            <div>
+              <div class="sr-t">Find 5 nurture leads I should call this week</div>
+              <div class="sr-s">Ranked by recent activity and likelihood to move</div>
+            </div>
+            <div class="sr-go">Run →</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Today strip -->
+      <section class="strip">
+        <div class="strip-card">
+          <div class="strip-h">
+            <div class="strip-title">Today's schedule</div>
+            <div class="strip-link">Calendar →</div>
+          </div>
+          <div class="strip-item">
+            <div><div class="strip-l">Showing · 4412 Bouldin Ave</div><div class="strip-sub">Maria Delgado · 30 min</div></div>
+            <div class="strip-r">10:30 AM</div>
+          </div>
+          <div class="strip-item">
+            <div><div class="strip-l">Buyer consult — Trevor Hill</div><div class="strip-sub">Zoom · 45 min</div></div>
+            <div class="strip-r">1:00 PM</div>
+          </div>
+          <div class="strip-item">
+            <div><div class="strip-l">Coaching call with Diane</div><div class="strip-sub">Weekly check-in</div></div>
+            <div class="strip-r">4:15 PM</div>
+          </div>
+        </div>
+
+        <div class="strip-card">
+          <div class="strip-h">
+            <div class="strip-title">Leads to act on</div>
+            <div class="strip-link">All leads →</div>
+          </div>
+          <div class="strip-item lead-card">
+            <div><div class="name">Trevor Hill</div><div class="sub">Pre-approved · $525k</div></div>
+            <span class="badge b-hot">HOT</span>
+          </div>
+          <div class="strip-item lead-card">
+            <div><div class="name">A. Okafor</div><div class="sub">Zillow inbound · 2h ago</div></div>
+            <span class="badge b-new">NEW</span>
+          </div>
+          <div class="strip-item lead-card">
+            <div><div class="name">Sam Chu</div><div class="sub">Nurture · 21d cold</div></div>
+            <span class="badge b-warm">RE-ENGAGE</span>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,356 @@
+<!--
+  Option 1 — Daily Coach
+  Pattern source: HoneyBook home + Todoist Today + Apollo onboarding hub
+  XDS tokens used:
+    Colors: system.action #006C84, system.containerTinted #D5F7FF,
+            neutral.labelPrimary #282B33, neutral.labelSecondary #3D424D,
+            neutral.labelTertiary #6C727E, neutral.pageBackground #F7F7F8,
+            neutral.containerBackground #FFFFFF, neutral.divider rgba(43,43,51,.1),
+            green.containerTinted #D6F2DF, green.action #026E24,
+            yellow.containerTinted #FFEDC9, yellow.action #995E00,
+            red.containerTinted #FCDCDD, red.action #C5050B,
+            purple.containerTinted #EFE8FB, purple.action #6730B4
+    Type: Mulish 400/700/800, fontSizeTitle32/24/20/16, fontSizeText16/14/12
+    Spacing: 8px base (space-2, space-3, space-4, space-6, space-8)
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Daily Coach · CRM Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+
+  :root{
+    --system-action:#006C84;
+    --system-action-hover:#0E4E5D;
+    --system-tinted:#D5F7FF;
+    --system-divider:rgba(0,108,132,.1);
+    --neutral-primary:#282B33;
+    --neutral-secondary:#3D424D;
+    --neutral-tertiary:#6C727E;
+    --neutral-inverse:#FFFFFF;
+    --neutral-page:#F7F7F8;
+    --neutral-container:#FFFFFF;
+    --neutral-tinted:#E4E5E7;
+    --neutral-divider:rgba(43,43,51,.1);
+    --green-tinted:#D6F2DF;
+    --green-action:#026E24;
+    --yellow-tinted:#FFEDC9;
+    --yellow-action:#995E00;
+    --red-tinted:#FCDCDD;
+    --red-action:#C5050B;
+    --purple-tinted:#EFE8FB;
+    --purple-action:#6730B4;
+    --shadow12:0 8px 24px rgba(43,43,51,.06);
+    --shadow04:0 2px 6px rgba(43,43,51,.05);
+    --r:12px; --r-sm:8px; --r-xs:6px; --r-full:999px;
+  }
+
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body,*{font-family:'Mulish',sans-serif;color:var(--neutral-primary);-webkit-font-smoothing:antialiased}
+  body{background:var(--neutral-page);min-height:100vh}
+
+  /* ---------- App shell ---------- */
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  .sidebar{background:var(--neutral-container);border-right:1px solid var(--neutral-divider);padding:24px 16px;display:flex;flex-direction:column;gap:8px}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 16px}
+  .brand-mark{width:28px;height:28px;border-radius:6px;background:#CC0000;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+  .brand-name{font-weight:800;font-size:16px;letter-spacing:.2px}
+  .nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--neutral-tertiary);font-weight:700;padding:16px 8px 4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:14px;color:var(--neutral-secondary);cursor:pointer}
+  .nav-item:hover{background:var(--neutral-page)}
+  .nav-item.active{background:var(--system-tinted);color:var(--system-action);font-weight:700}
+  .nav-item .ic{width:18px;height:18px;display:grid;place-items:center;opacity:.85}
+  .nav-item .count{margin-left:auto;font-size:12px;color:var(--neutral-tertiary)}
+
+  /* Onboarding hub (Apollo-style) */
+  .onboard{margin-top:auto;background:var(--purple-tinted);border-radius:var(--r);padding:14px;border:1px solid rgba(103,48,180,.15)}
+  .onboard-title{font-size:12px;font-weight:800;color:var(--purple-action);letter-spacing:.3px;text-transform:uppercase}
+  .onboard-h{font-size:14px;font-weight:700;margin:4px 0 8px}
+  .onboard-bar{height:6px;background:rgba(103,48,180,.15);border-radius:999px;overflow:hidden}
+  .onboard-bar > i{display:block;height:100%;width:43%;background:var(--purple-action)}
+  .onboard-meta{font-size:12px;color:var(--neutral-tertiary);margin-top:6px;display:flex;justify-content:space-between}
+
+  /* ---------- Main ---------- */
+  .main{padding:32px 40px 64px;max-width:1280px;width:100%}
+  .topbar{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+  .search{flex:1;display:flex;align-items:center;gap:8px;background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:10px;padding:10px 14px;color:var(--neutral-tertiary);font-size:14px}
+  .top-actions{display:flex;align-items:center;gap:8px}
+  .iconbtn{width:40px;height:40px;border-radius:10px;background:var(--neutral-container);border:1px solid var(--neutral-divider);display:grid;place-items:center;cursor:pointer}
+  .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#006C84,#0E4E5D);color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+
+  /* Hero greeting */
+  .hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:24px}
+  .greet-eyebrow{font-size:12px;font-weight:700;color:var(--neutral-tertiary);letter-spacing:.5px;text-transform:uppercase}
+  .greet{font-size:32px;line-height:40px;font-weight:800;margin:4px 0 0}
+  .greet em{font-style:normal;color:var(--system-action)}
+  .greet-sub{font-size:14px;line-height:20px;color:var(--neutral-secondary);margin-top:8px;max-width:540px}
+  .streak{display:flex;align-items:center;gap:10px;background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:var(--r);padding:12px 16px;box-shadow:var(--shadow04)}
+  .streak-flame{width:32px;height:32px;border-radius:8px;background:var(--yellow-tinted);color:var(--yellow-action);display:grid;place-items:center;font-weight:800}
+  .streak-num{font-size:20px;line-height:24px;font-weight:800}
+  .streak-label{font-size:12px;color:var(--neutral-tertiary)}
+
+  /* Stat strip (HoneyBook) */
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+  .stat{background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:var(--r);padding:16px 18px}
+  .stat-label{font-size:12px;color:var(--neutral-tertiary);font-weight:600}
+  .stat-row{display:flex;align-items:baseline;gap:8px;margin-top:6px}
+  .stat-value{font-size:24px;line-height:32px;font-weight:800}
+  .stat-delta{font-size:12px;font-weight:700;padding:2px 6px;border-radius:6px}
+  .stat-delta.pos{background:var(--green-tinted);color:var(--green-action)}
+  .stat-delta.neg{background:var(--red-tinted);color:var(--red-action)}
+
+  /* Layout grid */
+  .grid{display:grid;grid-template-columns:2fr 1fr;gap:20px}
+
+  /* Today's 3 plays */
+  .plays{background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:var(--r);box-shadow:var(--shadow12);overflow:hidden}
+  .plays-head{display:flex;align-items:center;justify-content:space-between;padding:18px 20px 12px}
+  .plays-title{font-size:20px;line-height:24px;font-weight:800}
+  .plays-sub{font-size:12px;color:var(--neutral-tertiary);margin-top:2px}
+  .plays-meta{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--neutral-tertiary)}
+  .meter{display:flex;align-items:center;gap:8px}
+  .meter-bar{width:96px;height:6px;background:var(--neutral-tinted);border-radius:999px;overflow:hidden}
+  .meter-fill{display:block;height:100%;width:40%;background:var(--system-action)}
+
+  .play{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;padding:16px 20px;border-top:1px solid var(--neutral-divider)}
+  .play-num{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--system-action);color:var(--system-action);display:grid;place-items:center;font-weight:800;font-size:13px;background:#fff}
+  .play.done .play-num{background:var(--system-action);color:#fff;border-color:var(--system-action)}
+  .play-body .who{font-size:15px;font-weight:700}
+  .play-body .what{font-size:13px;color:var(--neutral-secondary);margin-top:2px;line-height:18px}
+  .play-tag{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:999px;margin-top:6px}
+  .tag-followup{background:var(--system-tinted);color:var(--system-action)}
+  .tag-newlead{background:var(--green-tinted);color:var(--green-action)}
+  .tag-overdue{background:var(--red-tinted);color:var(--red-action)}
+  .play-actions{display:flex;gap:6px}
+
+  /* Right column cards */
+  .card{background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:var(--r);padding:18px 20px;margin-bottom:16px}
+  .card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+  .card-title{font-size:16px;font-weight:800}
+  .card-link{font-size:12px;color:var(--system-action);font-weight:700;cursor:pointer}
+
+  .appt{display:flex;gap:12px;padding:10px 0;border-bottom:1px solid var(--neutral-divider)}
+  .appt:last-child{border-bottom:none}
+  .appt-time{min-width:56px}
+  .appt-time .d{font-size:11px;color:var(--neutral-tertiary);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+  .appt-time .t{font-size:14px;font-weight:800;margin-top:2px}
+  .appt-body .ti{font-size:13px;font-weight:700}
+  .appt-body .sub{font-size:12px;color:var(--neutral-tertiary)}
+
+  .tip{display:flex;gap:12px;background:var(--purple-tinted);border:1px solid rgba(103,48,180,.15);border-radius:var(--r);padding:16px}
+  .tip-icon{width:32px;height:32px;border-radius:8px;background:#fff;display:grid;place-items:center;color:var(--purple-action);font-weight:800;flex-shrink:0}
+  .tip-eyebrow{font-size:11px;font-weight:700;color:var(--purple-action);text-transform:uppercase;letter-spacing:.4px}
+  .tip-text{font-size:13px;color:var(--neutral-secondary);line-height:18px;margin-top:4px}
+  .tip-cta{font-size:12px;font-weight:700;color:var(--purple-action);margin-top:8px;cursor:pointer}
+
+  .icon{width:14px;height:14px;display:inline-block;vertical-align:-2px}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- ===== Sidebar ===== -->
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="brand-mark">KW</div>
+      <div class="brand-name">Command</div>
+    </div>
+
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item active"><span class="ic">●</span>Today</div>
+    <div class="nav-item"><span class="ic">○</span>Leads<span class="count">42</span></div>
+    <div class="nav-item"><span class="ic">○</span>Contacts</div>
+    <div class="nav-item"><span class="ic">○</span>Pipeline</div>
+    <div class="nav-item"><span class="ic">○</span>Appointments</div>
+    <div class="nav-item"><span class="ic">○</span>Listings</div>
+
+    <div class="nav-section">Learn</div>
+    <div class="nav-item"><span class="ic">○</span>Coaching</div>
+    <div class="nav-item"><span class="ic">○</span>Scripts</div>
+
+    <div class="onboard">
+      <div class="onboard-title">Get started</div>
+      <div class="onboard-h">Set up your business</div>
+      <div class="onboard-bar"><i></i></div>
+      <div class="onboard-meta"><span>3 of 7 done</span><span>43%</span></div>
+    </div>
+  </aside>
+
+  <!-- ===== Main ===== -->
+  <main class="main">
+
+    <div class="topbar">
+      <div class="search">
+        <span>⌕</span><span>Search leads, contacts, listings…</span>
+      </div>
+      <div class="top-actions">
+        <div class="iconbtn">🔔</div>
+        <div class="iconbtn">✉</div>
+        <div class="avatar">AR</div>
+      </div>
+    </div>
+
+    <!-- Greeting -->
+    <div class="hero">
+      <div>
+        <div class="greet-eyebrow">Tuesday, May 21</div>
+        <h1 class="greet">Good morning, <em>Alfonso</em></h1>
+        <p class="greet-sub">Three small wins today and you're ahead of where you were last week. Let's keep the streak alive.</p>
+      </div>
+      <div class="streak">
+        <div class="streak-flame">🔥</div>
+        <div>
+          <div class="streak-num">12 days</div>
+          <div class="streak-label">Follow-up streak</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stats -->
+    <section class="stats">
+      <div class="stat">
+        <div class="stat-label">New leads this week</div>
+        <div class="stat-row"><div class="stat-value">7</div><div class="stat-delta pos">+3</div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Awaiting reply</div>
+        <div class="stat-row"><div class="stat-value">4</div><div class="stat-delta neg">−1</div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Tasks today</div>
+        <div class="stat-row"><div class="stat-value">5</div></div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">GCI this month</div>
+        <div class="stat-row"><div class="stat-value">$4,820</div><div class="stat-delta pos">+18%</div></div>
+      </div>
+    </section>
+
+    <div class="grid">
+
+      <!-- 3 plays -->
+      <section class="plays">
+        <div class="plays-head">
+          <div>
+            <div class="plays-title">Today's 3 plays</div>
+            <div class="plays-sub">Picked for you by KWIQ from leads most likely to move</div>
+          </div>
+          <div class="plays-meta">
+            <div class="meter">
+              <span>2 of 5 done</span>
+              <span class="meter-bar"><i class="meter-fill"></i></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="play done">
+          <div class="play-num">✓</div>
+          <div class="play-body">
+            <div class="who">Maria Delgado</div>
+            <div class="what">Sent listing alert for 3-bed in Travis Heights</div>
+            <span class="play-tag tag-followup">Follow-up</span>
+          </div>
+          <div class="play-actions">
+            <button style="background:transparent;color:var(--neutral-tertiary);border:1px solid var(--neutral-divider);border-radius:4px;font-family:'Mulish',sans-serif;font-size:12px;font-weight:700;padding:0 12px;height:32px;cursor:pointer">Reopen</button>
+          </div>
+        </div>
+
+        <div class="play">
+          <div class="play-num">1</div>
+          <div class="play-body">
+            <div class="who">Call Trevor Hill</div>
+            <div class="what">Mortgage pre-approval came through yesterday. Strike while it's warm — ask about the Mueller showing.</div>
+            <span class="play-tag tag-newlead">New lead · Hot</span>
+          </div>
+          <div class="play-actions">
+            <button style="background:transparent;color:#006C84;border:1.5px solid #006C84;border-radius:4px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:700;padding:0 14px;height:36px;cursor:pointer">Text</button>
+            <button style="background:#006C84;color:#FFFFFF;border:none;border-radius:4px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:700;padding:0 16px;height:36px;cursor:pointer">Call</button>
+          </div>
+        </div>
+
+        <div class="play">
+          <div class="play-num">2</div>
+          <div class="play-body">
+            <div class="who">Send CMA to the Patels</div>
+            <div class="what">They asked about Cherrywood comps Friday. Two new comparables hit MLS this morning.</div>
+            <span class="play-tag tag-followup">Follow-up</span>
+          </div>
+          <div class="play-actions">
+            <button style="background:#006C84;color:#FFFFFF;border:none;border-radius:4px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:700;padding:0 16px;height:36px;cursor:pointer">Build CMA</button>
+          </div>
+        </div>
+
+        <div class="play">
+          <div class="play-num">3</div>
+          <div class="play-body">
+            <div class="who">Re-engage Sam Chu</div>
+            <div class="what">No contact in 21 days. Last touch was a price-drop alert. Quick check-in note?</div>
+            <span class="play-tag tag-overdue">Overdue</span>
+          </div>
+          <div class="play-actions">
+            <button style="background:transparent;color:#006C84;border:1.5px solid #006C84;border-radius:4px;font-family:'Mulish',sans-serif;font-size:13px;font-weight:700;padding:0 14px;height:36px;cursor:pointer">Draft note</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Side column -->
+      <aside>
+        <div class="card">
+          <div class="card-h">
+            <div class="card-title">Today's schedule</div>
+            <div class="card-link">View calendar →</div>
+          </div>
+          <div class="appt">
+            <div class="appt-time"><div class="d">10:30 AM</div><div class="t">Today</div></div>
+            <div class="appt-body"><div class="ti">Showing · 4412 Bouldin Ave</div><div class="sub">Maria Delgado · 30 min</div></div>
+          </div>
+          <div class="appt">
+            <div class="appt-time"><div class="d">1:00 PM</div><div class="t">Today</div></div>
+            <div class="appt-body"><div class="ti">Buyer consult — Trevor Hill</div><div class="sub">Zoom · 45 min</div></div>
+          </div>
+          <div class="appt">
+            <div class="appt-time"><div class="d">4:15 PM</div><div class="t">Today</div></div>
+            <div class="appt-body"><div class="ti">Coaching call with Diane</div><div class="sub">Weekly check-in</div></div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-h">
+            <div class="card-title">Leads needing attention</div>
+            <div class="card-link">See all →</div>
+          </div>
+          <div class="appt">
+            <div class="appt-time" style="min-width:auto"><span class="play-tag tag-overdue">21d</span></div>
+            <div class="appt-body"><div class="ti">Sam Chu</div><div class="sub">Last: price-drop alert · $625k–700k</div></div>
+          </div>
+          <div class="appt">
+            <div class="appt-time" style="min-width:auto"><span class="play-tag" style="background:var(--yellow-tinted);color:var(--yellow-action)">9d</span></div>
+            <div class="appt-body"><div class="ti">Renata Voss</div><div class="sub">Asked about VA loans · no reply</div></div>
+          </div>
+          <div class="appt">
+            <div class="appt-time" style="min-width:auto"><span class="play-tag" style="background:var(--yellow-tinted);color:var(--yellow-action)">7d</span></div>
+            <div class="appt-body"><div class="ti">Marc & Lina Ferrer</div><div class="sub">Open-house guest · zip 78704</div></div>
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-icon">💡</div>
+          <div>
+            <div class="tip-eyebrow">Coaching tip</div>
+            <div class="tip-text">Agents who reply to new leads within 5 minutes convert <strong>3.2× more often.</strong> Trevor came in 14 minutes ago.</div>
+            <div class="tip-cta">Watch the 2-min lesson →</div>
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

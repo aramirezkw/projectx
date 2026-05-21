@@ -1,0 +1,237 @@
+<!--
+  Index — CRM Dashboard explorations for new / underperforming agents
+  Links to all 5 XDS prototypes. Each card shows the pattern source and core thesis.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CRM Dashboards · 5 Explorations</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+  :root{
+    --system-action:#006C84; --system-tinted:#D5F7FF;
+    --neutral-primary:#282B33; --neutral-secondary:#3D424D; --neutral-tertiary:#6C727E;
+    --neutral-page:#F7F7F8; --neutral-container:#FFFFFF; --neutral-divider:rgba(43,43,51,.1);
+    --green-tinted:#D6F2DF; --green-action:#026E24;
+    --yellow-tinted:#FFEDC9; --yellow-action:#995E00;
+    --red-tinted:#FCDCDD; --red-action:#C5050B;
+    --purple-tinted:#EFE8FB; --purple-action:#6730B4;
+    --blue-tinted:#D9EFFF; --blue-action:#0F5EAD;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body,*{font-family:'Mulish',sans-serif;color:var(--neutral-primary);-webkit-font-smoothing:antialiased}
+  body{background:var(--neutral-page);min-height:100vh}
+
+  .wrap{max-width:1100px;margin:0 auto;padding:56px 32px 80px}
+  .eyebrow{font-size:12px;color:var(--neutral-tertiary);text-transform:uppercase;letter-spacing:.6px;font-weight:800}
+  h1{font-size:32px;line-height:40px;font-weight:800;margin:6px 0 8px}
+  .lede{font-size:16px;line-height:24px;color:var(--neutral-secondary);max-width:680px}
+  .meta-row{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap}
+  .meta{font-size:12px;background:#fff;border:1px solid var(--neutral-divider);border-radius:999px;padding:6px 12px;color:var(--neutral-secondary);font-weight:700}
+
+  .grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin-top:36px}
+  .card{background:#fff;border:1px solid var(--neutral-divider);border-radius:16px;padding:0;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit;transition:transform .12s ease, box-shadow .12s ease}
+  .card:hover{transform:translateY(-2px);box-shadow:0 12px 28px rgba(43,43,51,.08)}
+  .card.full{grid-column:span 2}
+
+  .thumb{height:180px;display:grid;place-items:center;position:relative;overflow:hidden}
+  .thumb .num{position:absolute;top:14px;left:16px;width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.9);color:var(--neutral-primary);display:grid;place-items:center;font-weight:800;font-size:14px}
+
+  /* Distinct thumbnails per concept */
+  .t1{background:linear-gradient(135deg,#FFF8E7 0%,#FFFFFF 100%)}
+  .t1 .icon{font-size:64px}
+  .t2{background:linear-gradient(135deg,#D5F7FF 0%,#FFFFFF 100%);display:flex;align-items:flex-end;justify-content:center;gap:6px;padding:24px 24px 28px}
+  .t2 i{display:block;background:#006C84;border-radius:6px 6px 0 0;width:14%}
+  .t2 i:nth-child(1){height:90%;opacity:1}
+  .t2 i:nth-child(2){height:62%;opacity:.85}
+  .t2 i:nth-child(3){height:42%;opacity:.65}
+  .t2 i:nth-child(4){height:26%;opacity:.45}
+  .t2 i:nth-child(5){height:14%;opacity:.28}
+
+  .t3{background:linear-gradient(135deg,#EFE8FB 0%,#FFFFFF 100%);display:grid;place-items:center}
+  .t3 svg{transform:rotate(-90deg)}
+
+  .t4{background:linear-gradient(135deg,#F1FBF4 0%,#FFFFFF 100%);display:flex;gap:8px;padding:24px}
+  .t4 .col{flex:1;background:#fff;border:1px solid var(--neutral-divider);border-radius:8px;padding:8px;display:flex;flex-direction:column;gap:6px}
+  .t4 .bar{height:8px;border-radius:4px;background:var(--neutral-tinted)}
+  .t4 .bar.tall{height:14px;background:var(--system-tinted)}
+  .t4 .bar.win{background:var(--green-tinted)}
+
+  .t5{background:radial-gradient(420px 240px at 50% 20%, rgba(0,108,132,.15), transparent 60%), radial-gradient(380px 240px at 60% 80%, rgba(103,48,180,.10), transparent 60%), #fff;display:grid;place-items:center}
+  .t5 .bubble{background:#fff;border:1px solid var(--neutral-divider);border-radius:14px;padding:10px 16px;font-size:13px;color:var(--neutral-tertiary);box-shadow:0 8px 20px rgba(43,43,51,.06)}
+
+  .card-body{padding:20px 22px 22px}
+  .tag-row{display:flex;gap:6px;margin-bottom:8px;flex-wrap:wrap}
+  .tag{font-size:10px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;padding:3px 8px;border-radius:6px}
+  .tag.a{background:var(--yellow-tinted);color:var(--yellow-action)}
+  .tag.b{background:var(--system-tinted);color:var(--system-action)}
+  .tag.c{background:var(--purple-tinted);color:var(--purple-action)}
+  .tag.d{background:var(--green-tinted);color:var(--green-action)}
+  .tag.e{background:var(--blue-tinted);color:var(--blue-action)}
+
+  .card-title{font-size:20px;line-height:24px;font-weight:800;margin:0 0 6px}
+  .card-sub{font-size:13px;color:var(--neutral-tertiary);font-weight:700;margin:0 0 8px}
+  .card-body p{font-size:14px;line-height:20px;color:var(--neutral-secondary);margin:0 0 14px}
+
+  .footer{display:flex;justify-content:space-between;align-items:center;margin-top:auto}
+  .source{font-size:11px;color:var(--neutral-tertiary)}
+  .open{font-size:13px;font-weight:800;color:var(--system-action)}
+
+  .footnote{margin-top:36px;padding:18px 22px;background:#fff;border:1px solid var(--neutral-divider);border-radius:14px;font-size:13px;color:var(--neutral-secondary);line-height:20px}
+  .footnote b{color:var(--neutral-primary)}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="eyebrow">CRM dashboard exploration</div>
+  <h1>5 directions for new &amp; underperforming agents</h1>
+  <p class="lede">Each option targets a different failure mode: decision paralysis, invisible pipeline leakage, missing ambition, no felt momentum, or the blank-page problem. Patterns are sourced from Mobbin (Pipedrive, HubSpot, Attio, HoneyBook, ClickUp, Wrike, Todoist, ChatGPT, Gemini and more).</p>
+
+  <div class="meta-row">
+    <span class="meta">XDS · Light theme</span>
+    <span class="meta">Desktop · 1280px</span>
+    <span class="meta">5 prototypes</span>
+    <span class="meta">Static HTML</span>
+  </div>
+
+  <div class="grid">
+
+    <!-- 1 -->
+    <a class="card" href="01-daily-coach.html">
+      <div class="thumb t1">
+        <div class="num">1</div>
+        <div class="icon">🌅</div>
+      </div>
+      <div class="card-body">
+        <div class="tag-row">
+          <span class="tag a">Today focus</span>
+          <span class="tag c">Onboarding</span>
+        </div>
+        <h2 class="card-title">Daily Coach</h2>
+        <div class="card-sub">For agents who freeze when they open the CRM</div>
+        <p>Warm greeting, a 4-stat strip, and one big "Today's 3 plays" card that picks itself — each play has a one-tap action. A streak chip and a setup checklist nudge progress without pressure.</p>
+        <div class="footer">
+          <div class="source">HoneyBook · Todoist · Apollo</div>
+          <div class="open">Open prototype →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- 2 -->
+    <a class="card" href="02-pipeline-health.html">
+      <div class="thumb t2">
+        <div class="num">2</div>
+        <i></i><i></i><i></i><i></i><i></i>
+      </div>
+      <div class="card-body">
+        <div class="tag-row">
+          <span class="tag b">Diagnostic</span>
+          <span class="tag e">Pipeline</span>
+        </div>
+        <h2 class="card-title">Pipeline Health</h2>
+        <div class="card-sub">Surfaces the leak — "you lose deals to silence"</div>
+        <p>Funnel chart with stage-to-stage conversion %. Worst stage is called out in plain English. Kanban below uses HubSpot-style "No activity · 14d" flags so cold leads can't hide.</p>
+        <div class="footer">
+          <div class="source">Pipedrive · HubSpot · Attio</div>
+          <div class="open">Open prototype →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- 3 -->
+    <a class="card" href="03-goal-ladder.html">
+      <div class="thumb t3">
+        <div class="num">3</div>
+        <svg width="140" height="140" viewBox="0 0 140 140">
+          <circle cx="70" cy="70" r="58" stroke="#EFE8FB" stroke-width="14" fill="none"/>
+          <circle cx="70" cy="70" r="58" stroke="#6730B4" stroke-width="14" fill="none"
+                  stroke-dasharray="138 365" stroke-linecap="round"/>
+        </svg>
+      </div>
+      <div class="card-body">
+        <div class="tag-row">
+          <span class="tag c">Goals</span>
+          <span class="tag a">Motivation</span>
+        </div>
+        <h2 class="card-title">Goal Ladder</h2>
+        <div class="card-sub">Makes ambition concrete and stepwise</div>
+        <p>Big GCI ring, three sub-rings for the activities that drive it, a milestone ladder ("3 more appointments to hit your monthly target"), and a peer comparison band against agents at the same tenure.</p>
+        <div class="footer">
+          <div class="source">ClickUp Goals · Employment Hero · Todoist Karma</div>
+          <div class="open">Open prototype →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- 4 -->
+    <a class="card" href="04-wins-feed.html">
+      <div class="thumb t4">
+        <div class="num">4</div>
+        <div class="col">
+          <div class="bar tall"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="col">
+          <div class="bar"></div>
+          <div class="bar tall"></div>
+          <div class="bar"></div>
+        </div>
+        <div class="col">
+          <div class="bar win"></div>
+          <div class="bar win"></div>
+          <div class="bar"></div>
+          <div class="bar win"></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="tag-row">
+          <span class="tag d">Momentum</span>
+          <span class="tag b">Activity feed</span>
+        </div>
+        <h2 class="card-title">Wins Feed</h2>
+        <div class="card-sub">Makes small progress visible — builds confidence</div>
+        <p>Three columns: <em>Do this week</em>, <em>In motion</em>, <em>Wins this week</em>. Every reply, showing and signed offer becomes a card so the dashboard never feels dead — even for a slow week.</p>
+        <div class="footer">
+          <div class="source">Wrike · Linear · Todoist</div>
+          <div class="open">Open prototype →</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- 5 -->
+    <a class="card full" href="05-ai-copilot.html">
+      <div class="thumb t5">
+        <div class="num">5</div>
+        <div class="bubble">What do you want to work on?</div>
+      </div>
+      <div class="card-body">
+        <div class="tag-row">
+          <span class="tag b">Conversational</span>
+          <span class="tag c">AI-first</span>
+        </div>
+        <h2 class="card-title">AI Copilot Home</h2>
+        <div class="card-sub">Lowers the blank-page problem — just ask</div>
+        <p>Centered "What do you want to work on?" prompt with chips for the four jobs agents actually need help with: draft follow-ups, find leads to call, build a CMA, review pipeline. Below the fold: today's schedule and 3 leads to act on — so it's not all-or-nothing chat. Reuses the KWIQ shell, so this is the lightest implementation lift.</p>
+        <div class="footer">
+          <div class="source">ChatGPT · Gemini · ClickUp Brain · KWIQ</div>
+          <div class="open">Open prototype →</div>
+        </div>
+      </div>
+    </a>
+  </div>
+
+  <div class="footnote">
+    <b>Recommendation</b> — the strongest hybrid for this audience is <b>1 + 4 with a quiet 2</b>: a coach-styled home (Option 1), a wins feed in the right rail (Option 4), and pipeline-health flags surfaced inline on lead cards (Option 2). Worth A/B testing Option 5 separately for agents already using KWIQ.
+  </div>
+
+</div>
+
+</body>
+</html>

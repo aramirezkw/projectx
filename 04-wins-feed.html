@@ -1,0 +1,365 @@
+<!--
+  Option 4 — Wins Feed
+  Pattern source: Wrike productivity dashboard 3-col + Linear activity feed + Todoist celebrations
+  Three columns: Do this week / In motion / Wins this week
+-->
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Wins Feed · CRM Dashboard</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+  :root{
+    --system-action:#006C84; --system-tinted:#D5F7FF; --system-divider:rgba(0,108,132,.1);
+    --neutral-primary:#282B33; --neutral-secondary:#3D424D; --neutral-tertiary:#6C727E;
+    --neutral-page:#F7F7F8; --neutral-container:#FFFFFF; --neutral-tinted:#E4E5E7; --neutral-divider:rgba(43,43,51,.1);
+    --green-tinted:#D6F2DF; --green-action:#026E24;
+    --yellow-tinted:#FFEDC9; --yellow-action:#995E00;
+    --red-tinted:#FCDCDD; --red-action:#C5050B;
+    --blue-tinted:#D9EFFF; --blue-action:#0F5EAD;
+    --purple-tinted:#EFE8FB; --purple-action:#6730B4;
+    --shadow12:0 8px 24px rgba(43,43,51,.06); --shadow04:0 2px 6px rgba(43,43,51,.05);
+    --r:12px;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body,*{font-family:'Mulish',sans-serif;color:var(--neutral-primary);-webkit-font-smoothing:antialiased}
+  body{background:var(--neutral-page);min-height:100vh}
+
+  .app{display:grid;grid-template-columns:240px 1fr;min-height:100vh}
+  .sidebar{background:var(--neutral-container);border-right:1px solid var(--neutral-divider);padding:24px 16px;display:flex;flex-direction:column;gap:6px}
+  .brand{display:flex;align-items:center;gap:10px;padding:0 8px 16px}
+  .brand-mark{width:28px;height:28px;border-radius:6px;background:#CC0000;color:#fff;display:grid;place-items:center;font-weight:800;font-size:14px}
+  .brand-name{font-weight:800;font-size:16px}
+  .nav-section{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--neutral-tertiary);font-weight:700;padding:16px 8px 4px}
+  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:14px;color:var(--neutral-secondary);cursor:pointer}
+  .nav-item.active{background:var(--system-tinted);color:var(--system-action);font-weight:700}
+
+  .main{padding:32px 32px 64px}
+  .header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:20px}
+  .crumb{font-size:12px;color:var(--neutral-tertiary);text-transform:uppercase;letter-spacing:.5px;font-weight:700}
+  .h1{font-size:24px;line-height:32px;font-weight:800;margin-top:4px}
+  .h1-sub{font-size:14px;color:var(--neutral-secondary);margin-top:4px}
+
+  .summary{display:flex;gap:12px;margin-bottom:16px}
+  .pill{display:flex;align-items:center;gap:8px;background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:999px;padding:8px 14px;font-size:13px;color:var(--neutral-secondary)}
+  .pill b{color:var(--neutral-primary);font-weight:800}
+  .pill .dot{width:8px;height:8px;border-radius:50%}
+  .pill .dot.s{background:var(--system-action)}
+  .pill .dot.g{background:var(--green-action)}
+  .pill .dot.y{background:var(--yellow-action)}
+
+  /* 3 columns + rail */
+  .layout{display:grid;grid-template-columns:1fr 1fr 1fr 280px;gap:16px}
+
+  .col{background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+  .col-head{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:1px solid var(--neutral-divider)}
+  .col-title{font-size:15px;font-weight:800;display:flex;align-items:center;gap:8px}
+  .col-title .ic{width:24px;height:24px;border-radius:6px;display:grid;place-items:center;font-weight:800;font-size:12px}
+  .col-title .ic.todo{background:var(--system-tinted);color:var(--system-action)}
+  .col-title .ic.flow{background:var(--yellow-tinted);color:var(--yellow-action)}
+  .col-title .ic.win{background:var(--green-tinted);color:var(--green-action)}
+  .col-count{font-size:12px;color:var(--neutral-tertiary);font-weight:700}
+
+  .group-label{font-size:11px;color:var(--neutral-tertiary);font-weight:700;text-transform:uppercase;letter-spacing:.4px;margin-top:4px}
+
+  /* Task card */
+  .task{display:flex;gap:10px;align-items:flex-start;padding:10px;border-radius:10px;background:var(--neutral-page)}
+  .task .check{width:18px;height:18px;border-radius:50%;border:1.5px solid var(--neutral-tertiary);flex-shrink:0;margin-top:1px;cursor:pointer}
+  .task.done .check{background:var(--system-action);border-color:var(--system-action);position:relative}
+  .task.done .check::after{content:"✓";color:#fff;position:absolute;inset:0;display:grid;place-items:center;font-size:11px;font-weight:800}
+  .task-title{font-size:13px;font-weight:700;line-height:18px}
+  .task.done .task-title{color:var(--neutral-tertiary);text-decoration:line-through}
+  .task-sub{font-size:12px;color:var(--neutral-tertiary);margin-top:2px;line-height:16px}
+  .task-meta{display:flex;gap:6px;margin-top:6px;align-items:center;flex-wrap:wrap}
+  .tag{font-size:10px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;padding:2px 6px;border-radius:6px}
+  .tag.due{background:var(--red-tinted);color:var(--red-action)}
+  .tag.soon{background:var(--yellow-tinted);color:var(--yellow-action)}
+  .tag.priority{background:var(--purple-tinted);color:var(--purple-action)}
+
+  /* In motion card */
+  .motion{padding:12px;border-radius:10px;background:var(--neutral-page)}
+  .motion-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+  .motion-title{font-size:13px;font-weight:800}
+  .motion-stage{font-size:11px;font-weight:700;background:var(--system-tinted);color:var(--system-action);padding:2px 6px;border-radius:6px}
+  .motion-sub{font-size:12px;color:var(--neutral-tertiary)}
+  .motion-progress{display:flex;align-items:center;gap:6px;margin-top:8px}
+  .pdots{display:flex;gap:3px;flex:1}
+  .pd{flex:1;height:5px;border-radius:3px;background:var(--neutral-tinted)}
+  .pd.on{background:var(--system-action)}
+  .motion-act{font-size:11px;color:var(--neutral-tertiary);margin-top:6px}
+
+  /* Win card */
+  .win{padding:12px;border-radius:10px;background:linear-gradient(135deg,#F1FBF4 0%,#FFFFFF 60%);border:1px solid rgba(2,110,36,.18)}
+  .win.special{background:linear-gradient(135deg,#FFF8E7 0%,#FFFFFF 60%);border-color:rgba(153,94,0,.22)}
+  .win-head{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:4px}
+  .win-title{font-size:13px;font-weight:800}
+  .win-ts{font-size:11px;color:var(--neutral-tertiary);font-weight:700;white-space:nowrap}
+  .win-sub{font-size:12px;color:var(--neutral-secondary);line-height:16px}
+  .win-badge{font-size:11px;font-weight:800;color:var(--green-action);background:var(--green-tinted);padding:3px 8px;border-radius:999px;display:inline-block;margin-top:8px}
+  .win.special .win-badge{color:var(--yellow-action);background:var(--yellow-tinted)}
+  .celebrate{display:flex;align-items:center;gap:10px;background:#fff;border:1px dashed rgba(2,110,36,.3);border-radius:10px;padding:10px 12px}
+  .celebrate .ic{font-size:20px}
+  .celebrate .t{font-size:12px;color:var(--neutral-secondary)}
+  .celebrate .t b{color:var(--green-action)}
+
+  /* Right rail */
+  .rail{display:flex;flex-direction:column;gap:14px}
+  .rail-card{background:var(--neutral-container);border:1px solid var(--neutral-divider);border-radius:var(--r);padding:16px 18px}
+  .rail-card h4{margin:0 0 10px;font-size:13px;font-weight:800}
+  .hot{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--neutral-divider)}
+  .hot:last-child{border:none}
+  .hot-name{font-size:13px;font-weight:700}
+  .hot-sub{font-size:11px;color:var(--neutral-tertiary)}
+  .hot-tag{font-size:10px;font-weight:800;color:var(--red-action);background:var(--red-tinted);padding:2px 6px;border-radius:6px}
+
+  .tip{background:var(--purple-tinted);border:1px solid rgba(103,48,180,.15);border-radius:var(--r);padding:14px 16px}
+  .tip-eyebrow{font-size:10px;font-weight:800;color:var(--purple-action);text-transform:uppercase;letter-spacing:.4px}
+  .tip-h{font-size:13px;font-weight:800;margin:4px 0 6px}
+  .tip-b{font-size:12px;color:var(--neutral-secondary);line-height:16px}
+  .tip-cta{font-size:12px;font-weight:700;color:var(--purple-action);margin-top:8px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <aside class="sidebar">
+    <div class="brand"><div class="brand-mark">KW</div><div class="brand-name">Command</div></div>
+    <div class="nav-section">Workspace</div>
+    <div class="nav-item active">My week</div>
+    <div class="nav-item">Today</div>
+    <div class="nav-item">Leads</div>
+    <div class="nav-item">Pipeline</div>
+    <div class="nav-item">Appointments</div>
+    <div class="nav-item">Listings</div>
+  </aside>
+
+  <main class="main">
+
+    <div class="header">
+      <div>
+        <div class="crumb">Workspace · My week</div>
+        <div class="h1">This week, in motion</div>
+        <div class="h1-sub">Every reply, showing and signed offer adds up. Here's what you've got going.</div>
+      </div>
+      <div class="summary">
+        <div class="pill"><span class="dot s"></span>To do <b>7</b></div>
+        <div class="pill"><span class="dot y"></span>In motion <b>5</b></div>
+        <div class="pill"><span class="dot g"></span>Wins <b>9</b></div>
+      </div>
+    </div>
+
+    <div class="layout">
+
+      <!-- ====== TO DO THIS WEEK ====== -->
+      <section class="col">
+        <div class="col-head">
+          <div class="col-title"><span class="ic todo">●</span>Do this week</div>
+          <div class="col-count">7 left</div>
+        </div>
+
+        <div class="group-label">Today · Tue May 21</div>
+        <div class="task">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Call Trevor Hill</div>
+            <div class="task-sub">Pre-approved buyer · ask about Mueller showing</div>
+            <div class="task-meta"><span class="tag priority">Top play</span><span class="tag soon">12:00</span></div>
+          </div>
+        </div>
+        <div class="task">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Build CMA for the Patels</div>
+            <div class="task-sub">Cherrywood comps · 2 new MLS today</div>
+          </div>
+        </div>
+        <div class="task done">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Send listing alert to Maria Delgado</div>
+          </div>
+        </div>
+
+        <div class="group-label">Wed</div>
+        <div class="task">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Confirm Edwin Castro consult</div>
+            <div class="task-sub">Thursday 3pm Zoom — not confirmed yet</div>
+            <div class="task-meta"><span class="tag due">Not confirmed</span></div>
+          </div>
+        </div>
+        <div class="task">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Re-engage Sam Chu</div>
+            <div class="task-sub">21 days cold · price-drop alert worth a check-in</div>
+          </div>
+        </div>
+
+        <div class="group-label">Fri</div>
+        <div class="task">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Coaching prep · Diane</div>
+            <div class="task-sub">Bring 2 deals you want help with</div>
+          </div>
+        </div>
+        <div class="task">
+          <div class="check"></div>
+          <div>
+            <div class="task-title">Open house assets — 4412 Bouldin</div>
+            <div class="task-sub">Print flyers, schedule social posts</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ====== IN MOTION ====== -->
+      <section class="col">
+        <div class="col-head">
+          <div class="col-title"><span class="ic flow">→</span>In motion</div>
+          <div class="col-count">5 deals</div>
+        </div>
+
+        <div class="motion">
+          <div class="motion-head"><div class="motion-title">Maria Delgado</div><div class="motion-stage">Showing</div></div>
+          <div class="motion-sub">$535k · 4412 Bouldin Ave</div>
+          <div class="motion-progress">
+            <div class="pdots"><div class="pd on"></div><div class="pd on"></div><div class="pd on"></div><div class="pd"></div><div class="pd"></div></div>
+          </div>
+          <div class="motion-act">Showing today 10:30 · feedback request queued</div>
+        </div>
+
+        <div class="motion">
+          <div class="motion-head"><div class="motion-title">Trevor Hill</div><div class="motion-stage">New · Hot</div></div>
+          <div class="motion-sub">$525k · Mueller area</div>
+          <div class="motion-progress">
+            <div class="pdots"><div class="pd on"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
+          </div>
+          <div class="motion-act">Pre-approval came in yesterday · awaiting your call</div>
+        </div>
+
+        <div class="motion">
+          <div class="motion-head"><div class="motion-title">3812 Ranch Rd</div><div class="motion-stage">Under contract</div></div>
+          <div class="motion-sub">$285k · Inspection complete</div>
+          <div class="motion-progress">
+            <div class="pdots"><div class="pd on"></div><div class="pd on"></div><div class="pd on"></div><div class="pd on"></div><div class="pd"></div></div>
+          </div>
+          <div class="motion-act">Closing scheduled June 4 · 14 days out</div>
+        </div>
+
+        <div class="motion">
+          <div class="motion-head"><div class="motion-title">Holcombe duplex</div><div class="motion-stage">Under contract</div></div>
+          <div class="motion-sub">$225k · Appraisal pending</div>
+          <div class="motion-progress">
+            <div class="pdots"><div class="pd on"></div><div class="pd on"></div><div class="pd on"></div><div class="pd"></div><div class="pd"></div></div>
+          </div>
+          <div class="motion-act">Appraisal lands Thursday · stand by</div>
+        </div>
+
+        <div class="motion">
+          <div class="motion-head"><div class="motion-title">Edwin Castro</div><div class="motion-stage">Appointment</div></div>
+          <div class="motion-sub">$365k · Buyer consult</div>
+          <div class="motion-progress">
+            <div class="pdots"><div class="pd on"></div><div class="pd on"></div><div class="pd"></div><div class="pd"></div><div class="pd"></div></div>
+          </div>
+          <div class="motion-act">Booked Thu 3pm · awaiting confirmation</div>
+        </div>
+      </section>
+
+      <!-- ====== WINS ====== -->
+      <section class="col">
+        <div class="col-head">
+          <div class="col-title"><span class="ic win">★</span>Wins this week</div>
+          <div class="col-count">9 moments</div>
+        </div>
+
+        <div class="celebrate">
+          <div class="ic">🎉</div>
+          <div class="t"><b>You replied to 12 leads</b> inside 10 min — your best week so far.</div>
+        </div>
+
+        <div class="win special">
+          <div class="win-head"><div class="win-title">First repeat client of the year</div><div class="win-ts">Mon</div></div>
+          <div class="win-sub">Garza family came back to list their second home with you.</div>
+          <span class="win-badge">Milestone</span>
+        </div>
+
+        <div class="win">
+          <div class="win-head"><div class="win-title">Closed · 412 Pecan</div><div class="win-ts">Mon</div></div>
+          <div class="win-sub">$155k · Garza family · added <b>$4,650</b> to GCI</div>
+          <span class="win-badge">Closed deal</span>
+        </div>
+
+        <div class="win">
+          <div class="win-head"><div class="win-title">Offer accepted · 3812 Ranch Rd</div><div class="win-ts">Tue</div></div>
+          <div class="win-sub">Buyer-side · $285k · 14 days to close</div>
+          <span class="win-badge">Under contract</span>
+        </div>
+
+        <div class="win">
+          <div class="win-head"><div class="win-title">Showing scheduled</div><div class="win-ts">Tue</div></div>
+          <div class="win-sub">Maria Delgado · 4412 Bouldin Ave · today 10:30</div>
+        </div>
+
+        <div class="win">
+          <div class="win-head"><div class="win-title">Lead replied · Trevor Hill</div><div class="win-ts">Mon</div></div>
+          <div class="win-sub">"Yes, mortgage pre-approval came through 🎉" — call scheduled</div>
+        </div>
+
+        <div class="win">
+          <div class="win-head"><div class="win-title">3 new buyer leads</div><div class="win-ts">Sun</div></div>
+          <div class="win-sub">All from your "78704 first-timers" campaign</div>
+        </div>
+
+        <div class="win">
+          <div class="win-head"><div class="win-title">Listing photos uploaded</div><div class="win-ts">Sun</div></div>
+          <div class="win-sub">4412 Bouldin · 24 photos · ready to go live</div>
+        </div>
+      </section>
+
+      <!-- ====== Right rail ====== -->
+      <aside class="rail">
+        <div class="rail-card">
+          <h4>🔥 Hot leads</h4>
+          <div class="hot">
+            <div><div class="hot-name">Trevor Hill</div><div class="hot-sub">Pre-approved · $525k</div></div>
+            <div class="hot-tag">CALL</div>
+          </div>
+          <div class="hot">
+            <div><div class="hot-name">A. Okafor</div><div class="hot-sub">Zillow · 2h ago</div></div>
+            <div class="hot-tag">NEW</div>
+          </div>
+          <div class="hot">
+            <div><div class="hot-name">Maria Delgado</div><div class="hot-sub">Showing today</div></div>
+            <div class="hot-tag">PREP</div>
+          </div>
+        </div>
+
+        <div class="tip">
+          <div class="tip-eyebrow">Tip of the day</div>
+          <div class="tip-h">Reply within 5 minutes.</div>
+          <div class="tip-b">Agents who do convert 3.2× more often. Trevor came in 14 min ago — still warm.</div>
+          <div class="tip-cta">Watch the 2-min lesson →</div>
+        </div>
+
+        <div class="rail-card">
+          <h4>This week vs. last</h4>
+          <div style="font-size:12px;color:var(--neutral-secondary);line-height:18px">
+            ▸ <b>+5</b> activities logged<br>
+            ▸ <b>+2</b> leads contacted same-day<br>
+            ▸ <b>+1</b> appointment booked
+          </div>
+        </div>
+      </aside>
+
+    </div>
+  </main>
+</div>
+
+</body>
+</html>
